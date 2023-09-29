@@ -23,7 +23,15 @@ public class Window {
 		get; set;
 	}
 
-	public Window(string title, uint interval, Action<long, uint> onUpdate, Action<Exception> onError) {
+	private uint Width {
+		get;
+	}
+
+	private uint Height {
+		get;
+	}
+
+	public Window(string title, uint width, uint height, Action<long, uint> onUpdate, Action<Exception> onError, uint interval) {
 		if (interval < 10 || interval > 1000) {
 			throw new Exception("Invalid interval!");
 		}
@@ -37,14 +45,17 @@ public class Window {
 
 		OnUpdate = onUpdate;
 		OnError = onError;
+
+		Width = width;
+		Height = height;
 	}
 
 	public void Visualize() {
 		IntPtr window = SDL.SDL_CreateWindow(Title,
 			SDL.SDL_WINDOWPOS_CENTERED,
 			SDL.SDL_WINDOWPOS_CENTERED,
-			700,
-			700,
+			(int)Width,
+			(int)Height,
 			SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS);
 
 		if (window == IntPtr.Zero) {
