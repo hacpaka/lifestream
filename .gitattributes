@@ -1,0 +1,12 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Custom for Visual Studio
+*.cs            text diff=csharp eol=lf
+*.cshtml        text diff=html eol=lf
+*.csx           text diff=csharp eol=lf
+*.sln           text eol=lf
+*.csproj        text eol=lf
+*.DotSettings   text eol=lf
+.gitignore      text eol=lf
+.gitattributes  text eol=lf
