@@ -58,7 +58,6 @@ public class Window {
 				OnError.Invoke(e);
 			}
 
-			Console.WriteLine($"######### {interval}");
 			return interval;
 		}, window);
 
