@@ -31,6 +31,10 @@ public class Window {
 		get;
 	}
 
+	private State State {
+		get;
+	}
+
 	public Window(string title, uint width, uint height, Action<long, uint> onUpdate, Action<Exception> onError, uint interval) {
 		if (interval < 10 || interval > 1000) {
 			throw new Exception("Invalid interval!");
@@ -48,6 +52,8 @@ public class Window {
 
 		Width = width;
 		Height = height;
+
+		State = new State(Width, Height);
 	}
 
 	public void Visualize() {
@@ -104,8 +110,25 @@ public class Window {
 	}
 
 	private void Draw(IntPtr renderer) {
-		SDL.SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
+		SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL.SDL_RenderClear(renderer);
+
+		Random random = new();
+		for (int i = 0; i < Width; i++) {
+			for (int j = 0; j < Height; j++) {
+
+				SDL.SDL_SetRenderDrawColor(renderer, 0, 0, (byte)random.Next(0, 255), 255);
+				SDL.SDL_Rect rect = new() {
+					x = i * 10,
+					y = j * 10,
+					w = 10,
+					h = 10
+				};
+
+				SDL.SDL_RenderFillRect(renderer, ref rect);
+			}
+		}
+
 		SDL.SDL_RenderPresent(renderer);
 	}
 }
