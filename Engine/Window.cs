@@ -11,6 +11,10 @@ public class Window {
 		get;
 	}
 
+	private Action<Exception> OnError {
+		get;
+	}
+
 	private uint Interval {
 		get;
 	}
@@ -19,21 +23,20 @@ public class Window {
 		get; set;
 	}
 
-	public Window(string title, uint interval, Action<long, uint> onUpdate) {
-		Title = title;
-
+	public Window(string title, uint interval, Action<long, uint> onUpdate, Action<Exception> onError) {
 		if (interval < 10 || interval > 1000) {
 			throw new Exception("Invalid interval!");
 		}
 
 		Interval = interval;
-		OnUpdate = onUpdate;
+		Title = title;
 
 		if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO | SDL.SDL_INIT_TIMER) > 0) {
 			throw new Exception($"Initialization failed! {SDL.SDL_GetError()}");
 		}
 
-		Interval = 0;
+		OnUpdate = onUpdate;
+		OnError = onError;
 	}
 
 	public void Visualize() {
@@ -49,8 +52,14 @@ public class Window {
 		}
 
 		int timer = SDL.SDL_AddTimer(Interval, (interval, _) => {
-			OnUpdate.Invoke(++Index, interval);
-			return Interval;
+			try {
+				OnUpdate.Invoke(++Index, interval);
+			} catch (Exception e) {
+				OnError.Invoke(e);
+			}
+
+			Console.WriteLine($"######### {interval}");
+			return interval;
 		}, window);
 
 		IntPtr renderer = SDL.SDL_CreateRenderer(window, -1,
