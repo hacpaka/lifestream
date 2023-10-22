@@ -2,7 +2,7 @@ using Lifestream.Engine.Abstractions;
 
 namespace Lifestream.Engine;
 
-public class Layer: ASizable{
+public class Layer: ASizable {
 	private Color[,] Colors {
 		get;
 	}
