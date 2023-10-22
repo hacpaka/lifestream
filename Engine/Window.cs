@@ -3,11 +3,15 @@ namespace Lifestream.Engine;
 using SDL2;
 
 public class Window {
+	private Canvas Canvas {
+		get;
+	}
+
 	private string Title {
 		get;
 	}
 
-	private Action<long, uint> OnUpdate {
+	private Action<long, Canvas> OnUpdate {
 		get;
 	}
 
@@ -35,7 +39,11 @@ public class Window {
 		get;
 	}
 
-	public Window(string title, uint width, uint height, Action<long, uint> onUpdate, Action<Exception> onError, uint interval) {
+	public uint Size {
+		get;
+	}
+
+	public Window(string title, uint width, uint height, uint size, Action<Canvas> onStart, Action<long, Canvas> onUpdate, Action<Exception> onError, uint interval) {
 		if (interval < 10 || interval > 1000) {
 			throw new Exception("Invalid interval!");
 		}
@@ -52,8 +60,10 @@ public class Window {
 
 		Width = width;
 		Height = height;
+		Size = size;
 
-		State = new State(Width, Height);
+		Canvas = new Canvas(width / size, height / size);
+		onStart.Invoke(Canvas);
 	}
 
 	public void Visualize() {
@@ -70,7 +80,7 @@ public class Window {
 
 		int timer = SDL.SDL_AddTimer(Interval, (interval, _) => {
 			try {
-				OnUpdate.Invoke(++Index, interval);
+				OnUpdate.Invoke(++Index, Canvas);
 			} catch (Exception e) {
 				OnError.Invoke(e);
 			}
@@ -80,6 +90,8 @@ public class Window {
 
 		IntPtr renderer = SDL.SDL_CreateRenderer(window, -1,
 			SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED | SDL.SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC);
+
+		SDL.SDL_SetRenderDrawBlendMode(renderer, SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND);
 
 		bool quit = false;
 		while (!quit) {
@@ -110,24 +122,20 @@ public class Window {
 	}
 
 	private void Draw(IntPtr renderer) {
-		SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL.SDL_RenderClear(renderer);
 
-		Random random = new();
-		for (int i = 0; i < Width; i++) {
-			for (int j = 0; j < Height; j++) {
+		Canvas.Iterate((x, y, color) => {
+			SDL.SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
 
-				SDL.SDL_SetRenderDrawColor(renderer, 0, 0, (byte)random.Next(0, 255), 255);
-				SDL.SDL_Rect rect = new() {
-					x = i * 10,
-					y = j * 10,
-					w = 10,
-					h = 10
-				};
+			SDL.SDL_Rect rect = new() {
+				x = (int)(x * (int)Size),
+				y = (int)(y * (int)Size),
+				w = (int)Size,
+				h = (int)Size
+			};
 
-				SDL.SDL_RenderFillRect(renderer, ref rect);
-			}
-		}
+			SDL.SDL_RenderFillRect(renderer, ref rect);
+		});
 
 		SDL.SDL_RenderPresent(renderer);
 	}

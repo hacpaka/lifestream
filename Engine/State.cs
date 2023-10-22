@@ -5,14 +5,13 @@ struct SNode {
 		get; set;
 	}
 
-	public SNode(byte water) {
-		Water = water;
+	public byte Resource {
+		get; set;
 	}
 
-	public static SNode Default {
-		get {
-			return new SNode(0);
-		}
+	public SNode(byte water, byte resource) {
+		Water = water;
+		Resource = resource;
 	}
 }
 
@@ -39,11 +38,14 @@ public class State {
 		}
 
 		Height = height;
+
 		data = new SNode[width, height];
+		Random random = new();
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				data[i, j] = SNode.Default;
+
+				data[i, j] = new SNode((byte)random.Next(0, 255), (byte)random.Next(0, 255));
 			}
 		}
 	}
