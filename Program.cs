@@ -4,8 +4,9 @@ namespace Lifestream {
 	internal static class Program {
 		private const uint INTERVAL = 200;
 
-		private const uint WIDTH = 700;
+		private const uint WIDTH = 1000;
 		private const uint HEIGHT = 700;
+
 		private const uint SIZE = 10;
 
 		private static void Main() {
@@ -28,7 +29,10 @@ namespace Lifestream {
 						layer2.Set(i, j, new Color(0, (byte)random.Next(0, 255), 0, (byte)random.Next(0, 255)));
 					}
 				}
+
+				Console.WriteLine($"==========> {index}");
 			}, e => {
+
 				Console.WriteLine($"[ERROR]: {e}");
 			}, INTERVAL).Visualize();
 		}

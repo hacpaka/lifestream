@@ -35,11 +35,7 @@ public class Window {
 		get;
 	}
 
-	private State State {
-		get;
-	}
-
-	public uint Size {
+	private uint Size {
 		get;
 	}
 

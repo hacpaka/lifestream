@@ -11,7 +11,7 @@ public class Canvas: ASizable {
 		}
 	}
 
-	public Canvas(uint height, uint width): base(width, height) {
+	public Canvas(uint width, uint height): base(width, height) {
 		if (Width < 1) {
 			throw new Exception("Invalid canvas width!");
 		}
@@ -19,6 +19,8 @@ public class Canvas: ASizable {
 		if (Height < 1) {
 			throw new Exception("Invalid canvas height!");
 		}
+
+		Console.WriteLine($"=====> {Width}:{Height}");
 	}
 
 	public void AddLayer() {
