@@ -5,18 +5,18 @@ struct SNode {
 		get; set;
 	}
 
-	public byte Resource {
+	public byte Food {
 		get; set;
 	}
 
-	public SNode(byte water, byte resource) {
+	public SNode(byte water, byte food) {
 		Water = water;
-		Resource = resource;
+		Food = food;
 	}
 }
 
 public class State {
-	private SNode[,] data;
+	private readonly SNode[,] data;
 
 	public uint Width {
 		get;
@@ -27,13 +27,13 @@ public class State {
 	}
 
 	public State(uint width, uint height) {
-		if (width < 10 || width > 1000) {
+		if (width < 10 || width > 1200) {
 			throw new Exception("Invalid width!");
 		}
 
 		Width = width;
 
-		if (height < 10 || height > 1000) {
+		if (height < 10 || height > 1200) {
 			throw new Exception("Invalid height!");
 		}
 

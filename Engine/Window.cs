@@ -3,6 +3,8 @@ namespace Lifestream.Engine;
 using SDL2;
 
 public class Window {
+	private readonly SDL.SDL_Rect[,] surface;
+
 	private Canvas Canvas {
 		get;
 	}
@@ -35,10 +37,6 @@ public class Window {
 		get;
 	}
 
-	private uint Size {
-		get;
-	}
-
 	public Window(string title, uint width, uint height, uint size, Action<Canvas> onStart, Action<long, Canvas> onUpdate, Action<Exception> onError, uint interval) {
 		if (interval < 10 || interval > 1000) {
 			throw new Exception("Invalid interval!");
@@ -54,11 +52,23 @@ public class Window {
 		OnUpdate = onUpdate;
 		OnError = onError;
 
-		Width = width;
-		Height = height;
-		Size = size;
+		surface = new SDL.SDL_Rect[width, height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 
-		Canvas = new Canvas(width / size, height / size);
+				surface[x, y] = new SDL.SDL_Rect {
+					x = (int)(x * size),
+					y = (int)(y * size),
+					w = (int)size,
+					h = (int)size
+				};
+			}
+		}
+
+		Width = width * size;
+		Height = height * size;
+
+		Canvas = new Canvas(width, height);
 		onStart.Invoke(Canvas);
 	}
 
@@ -122,15 +132,7 @@ public class Window {
 
 		Canvas.Iterate((x, y, color) => {
 			SDL.SDL_SetRenderDrawColor(renderer, color.R, color.G, color.B, color.A);
-
-			SDL.SDL_Rect rect = new() {
-				x = (int)(x * (int)Size),
-				y = (int)(y * (int)Size),
-				w = (int)Size,
-				h = (int)Size
-			};
-
-			SDL.SDL_RenderFillRect(renderer, ref rect);
+			SDL.SDL_RenderFillRect(renderer, ref surface[x, y]);
 		});
 
 		SDL.SDL_RenderPresent(renderer);

@@ -4,10 +4,9 @@ namespace Lifestream {
 	internal static class Program {
 		private const uint INTERVAL = 200;
 
-		private const uint WIDTH = 1000;
-		private const uint HEIGHT = 700;
-
 		private const uint SIZE = 10;
+		private const uint WIDTH = 100;
+		private const uint HEIGHT = 70;
 
 		private static void Main() {
 			new Window("Lifestream", WIDTH, HEIGHT, SIZE, canvas => {
